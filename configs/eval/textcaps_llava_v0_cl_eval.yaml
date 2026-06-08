@@ -1,0 +1,49 @@
+model:
+  arch: pa_llava_v0_general
+  model_type: cl_caption_llava_v0
+  load_pretrained: true
+  # model_path: checkpoints/LLaVA/llava-7b-v0-mm-projector
+  # model_base: checkpoints/LLaVA/vicuna-7b-v0
+  model_path: checkpoints/LLaVA/llava-7b-v0
+  model_base: null
+  model_name: llava-v0
+  freeze_vit: true
+  mix_query: false
+  prompt: "Describe this image in detail with one sentence."
+
+datasets:
+  cl_textcaps_caption:
+    vis_processor:
+      eval:
+        name: llava_clip_image_eval
+        visual_encoder_name: openai/clip-vit-large-patch14
+    text_processor:
+      eval:
+        name: "blip_caption"
+
+run:
+  runner: runner_cl
+  task: eca_llava_captioning
+  batch_size_train: 32
+  batch_size_eval: 16
+  num_workers: 4
+
+  max_len: 16
+  min_len: 8
+  num_beams: 1
+  temperature: 0.2
+  top_p: null
+
+  init_topic: 1
+  topic_per_task: 1
+
+  seed: 42
+  output_dir: "output/LLaVA/Caption/TextCaps_ZeroShot"
+
+  evaluate: true
+  test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True

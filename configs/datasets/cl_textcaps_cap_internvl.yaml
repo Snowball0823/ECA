@@ -1,0 +1,23 @@
+datasets:
+  cl_textcaps_caption_internvl:
+    data_type: images
+
+    build_info:
+      annotations:
+        train:
+          url:
+            - /path/or/url/to/tos_textcaps_caption_train.json
+          storage:
+            - TextCaps/tos_textcaps_caption_train.json
+        val:
+          url:
+            - /path/or/url/to/tos_textcaps_caption_val_eval.json
+          storage:
+            - TextCaps/tos_textcaps_caption_val_eval.json
+        test:
+          url:
+            - /path/or/url/to/tos_textcaps_caption_val.json
+          storage:
+            - TextCaps/tos_textcaps_caption_val.json
+      images:
+        storage: TextCaps/images

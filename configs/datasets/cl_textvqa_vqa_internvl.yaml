@@ -1,0 +1,23 @@
+datasets:
+  cl_textvqa_vqa_internvl:
+    data_type: images
+
+    build_info:
+      annotations:
+        train:
+          url:
+            - /path/or/url/to/tos_textvqa_train.json
+          storage:
+            - TextCaps/tos_textvqa_train.json
+        val:
+          url:
+            - /path/or/url/to/tos_textvqa_val_eval.json
+          storage:
+            - TextCaps/tos_textvqa_val_eval.json
+        test:
+          url:
+            - /path/or/url/to/tos_textvqa_val.json
+          storage:
+            - TextCaps/tos_textvqa_val.json
+      images:
+        storage: TextCaps/images

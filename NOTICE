@@ -1,0 +1,56 @@
+ECA NOTICE
+
+This repository contains original ECA code and ECA-specific modifications by
+Jiangtao Kong. The ECA original code and ECA-specific modifications are released
+for non-commercial research use only under the root LICENSE file.
+
+Contact: Jiangtao Kong <tinysnowball0823@gmail.com>
+
+Third-party components remain under their own licenses. This repository does
+not relicense third-party code, datasets, pretrained weights, or external
+checkpoints.
+
+Third-party components include, but are not limited to:
+
+- LAVIS
+  The LAVIS code in third_party/LAVIS/ is derived from Salesforce LAVIS and remains under
+  the BSD-3-Clause license. Some top-level files in this repository are derived
+  from or adapted around the LAVIS code path. Original LAVIS notices must be
+  retained.
+
+- AdapterHub adapters
+  third_party/adapters-0.2.2/ is derived from AdapterHub adapters and remains
+  under the Apache License 2.0. ECA-specific patches are provided for
+  reproducibility and do not remove upstream notices.
+
+- LLaVA
+  third_party/LLaVA/ is derived from the official LLaVA codebase and remains
+  under its upstream license. LLaVA model weights are not licensed by this
+  repository and must be obtained under their provider terms.
+
+- InternVL
+  third_party/InternVL/ is derived from the official InternVL codebase and
+  remains under its upstream license. InternVL model weights are not licensed by
+  this repository and must be obtained under their provider terms.
+
+- Evaluation packages and datasets
+  COCO, VQA, TextCaps, TextVQA, pycocoevalcap, pycocotools, and other external
+  evaluation resources remain under their own licenses and terms of use.
+
+- ECA ToS annotations and topic splits
+  The ToS annotations, topic split files, protocol metadata, and dataset
+  configuration files created for ECA are ECA dataset assets and are released
+  for non-commercial research use only under the root LICENSE file. They may
+  reference source datasets such as MSCOCO, VQAv2, TextCaps, and TextVQA.
+  Users must separately comply with the licenses and terms of those source
+  datasets.
+
+Patch files under third_party/patches/ document the local changes used for ECA
+reproducibility. When a patch modifies upstream code, the original upstream
+license continues to apply to the upstream portions and the ECA-specific changes
+are subject to the root LICENSE file unless stated otherwise.
+
+If a file contains its own license header, that file header controls the license
+notice for that file. If there is any conflict between this NOTICE and an
+upstream license notice, the upstream notice controls for the corresponding
+third-party component.

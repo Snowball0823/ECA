@@ -1,0 +1,98 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: pa_blip2_opt
+  model_type: cl_caption_coco_opt2.7b
+  load_finetuned: False
+  use_grad_checkpoint: True
+  freeze_vit: False
+  mix_query: False
+  # rewrite kd weight
+  kd_weight: 1.0
+  qformer_text_input: True
+
+
+datasets:
+  cl_textcaps_caption: # name of the dataset builder
+    vis_processor:
+        train:
+          name: "blip2_image_train"
+          image_size: 364
+        eval:
+          name: "blip_image_eval"
+          image_size: 364
+    text_processor:
+        train:
+          name: "blip_caption"
+          prompt: "a photo of "
+        eval:
+          name: "blip_caption"
+run:
+  runner: runner_cl
+  task: eca_q_lwf_captioning
+  # optimizer
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 1e-5
+  min_lr: 0
+  warmup_lr: 1e-8
+  warmup_steps: 100
+  weight_decay: 0.05
+  max_epoch: 5
+  batch_size_train: 8
+  batch_size_eval: 8
+  num_workers: 32
+  accum_grad_iters: 1
+
+  max_len: 30
+  min_len: 8
+  num_beams: 5
+
+  # cl setting
+  init_topic: 1
+  topic_per_task: 1
+
+  # FeDEx setting
+  expand_pa: True
+  # overlap, jsd, dis_cor, i_fim
+  fim_metric: "i_fim"
+  fim_threshold: 1.0
+  # EWC
+  use_ewc: False
+  # for visual training
+  lora_visual_first: True
+  # for dictionary learning
+  dictionary_learning:
+    use_dictionary: False
+    n_components: 7040
+    # n_components: 14080
+    iter: 1
+    alpha: 1.0
+    fit_algorithm: "ista"
+    constrained: True
+    # for sparse code fit
+    maxiter: 200
+    tol: 1e-5
+    positive_code: True
+    backtrack: False
+    fast: True
+    accum_batch: 1
+
+  seed: 42
+  output_dir: "output/BLIP2/Caption/TextCaps_LwF"
+
+  amp: False
+  resume_ckpt_path: null
+  # resume_ckpt_path: "/path/to/checkpoint_final.pth"
+
+  evaluate: False
+  train_splits: ["train"]
+  valid_splits: ["val"]
+  test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True

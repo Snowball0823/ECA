@@ -1,0 +1,94 @@
+diff --git a/lavis/common/registry.py b/lavis/common/registry.py
+index 9039d8a..2d580ae 100644
+--- a/lavis/common/registry.py
++++ b/lavis/common/registry.py
+@@ -201,6 +201,25 @@ class Registry:
+             raise KeyError("Name '{}' already registered.".format(name))
+         cls.mapping["paths"][name] = path
+ 
++
++    @classmethod
++    def replace_path(cls, name, path):
++        r"""Replace a registered path to registry with key 'name'
++
++        Args:
++            name: Key with which the path will be registered.
++
++        Usage:
++
++            from lavis.common.registry import registry
++        """
++        assert isinstance(path, str), "All path must be str."
++        if name in cls.mapping["paths"]:
++            cls.mapping["paths"][name] = path
++        else:
++            raise KeyError("Name '{}' is not registered.".format(name))
++
++
+     @classmethod
+     def register(cls, name, obj):
+         r"""Register an item to registry with key 'name'
+diff --git a/lavis/configs/default.yaml b/lavis/configs/default.yaml
+index f58d32e..7c9b78f 100644
+--- a/lavis/configs/default.yaml
++++ b/lavis/configs/default.yaml
+@@ -7,4 +7,4 @@ env:
+   # For default users
+   # cache_root: "cache"
+   # For internal use with persistent storage
+-  cache_root: "/export/home/.cache/lavis"
++  cache_root: "cache"
+diff --git a/lavis/models/__init__.py b/lavis/models/__init__.py
+index 47dd552..e288643 100644
+--- a/lavis/models/__init__.py
++++ b/lavis/models/__init__.py
+@@ -6,6 +6,7 @@
+ """
+ 
+ import logging
++import os
+ import torch
+ from omegaconf import OmegaConf
+ from lavis.common.registry import registry
+@@ -41,7 +42,8 @@ from lavis.models.blip2_models.blip2_t5_instruct import Blip2T5Instruct
+ from lavis.models.blip2_models.blip2_vicuna_instruct import Blip2VicunaInstruct
+ from lavis.models.blip2_models.blip2_vicuna_xinstruct import Blip2VicunaXInstruct
+ 
+-from lavis.models.blip_diffusion_models.blip_diffusion import BlipDiffusion
++if os.getenv("ECA_ENABLE_BLIP_DIFFUSION", "0") == "1":
++    from lavis.models.blip_diffusion_models.blip_diffusion import BlipDiffusion
+ 
+ from lavis.models.pnp_vqa_models.pnp_vqa import PNPVQA
+ from lavis.models.pnp_vqa_models.pnp_unifiedqav2_fid import PNPUnifiedQAv2FiD
+@@ -70,7 +72,6 @@ __all__ = [
+     "BlipFeatureExtractor",
+     "BlipCaption",
+     "BlipClassification",
+-    "BlipDiffusion",
+     "BlipITM",
+     "BlipNLVR",
+     "BlipPretrain",
+@@ -94,6 +95,10 @@ __all__ = [
+ ]
+ 
+ 
++if os.getenv("ECA_ENABLE_BLIP_DIFFUSION", "0") == "1":
++    __all__.append("BlipDiffusion")
++
++
+ def load_model(name, model_type, is_eval=False, device="cpu", checkpoint=None):
+     """
+     Load supported models.
+diff --git a/requirements.txt b/requirements.txt
+index 3f24699..1e85210 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -24,7 +24,7 @@ timm==0.4.12
+ torch>=1.10.0
+ torchvision
+ tqdm
+-transformers==4.33.2
++transformers>=4.33.2
+ webdataset
+ wheel
+ torchaudio

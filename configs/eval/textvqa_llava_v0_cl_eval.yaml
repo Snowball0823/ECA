@@ -1,0 +1,49 @@
+model:
+  arch: pa_llava_v0_general
+  model_type: cl_vqa_llava_v0
+  load_pretrained: true
+  model_path: checkpoints/LLaVA/llava-7b-v0
+  model_base: null
+  model_name: llava-v0
+  freeze_vit: true
+  mix_query: false
+  prompt: ""
+  use_ocr_input: true
+
+datasets:
+  cl_textvqa_vqa:
+    vis_processor:
+      eval:
+        name: llava_clip_image_eval
+        visual_encoder_name: openai/clip-vit-large-patch14
+    text_processor:
+      eval:
+        name: "blip_question"
+
+run:
+  runner: runner_cl
+  task: eca_llava_vqa
+  batch_size_train: 32
+  batch_size_eval: 16
+  num_workers: 4
+
+  max_len: 8
+  min_len: 1
+  num_beams: 1
+  temperature: 0.2
+  top_p: null
+
+  init_topic: 1
+  topic_per_task: 1
+
+  prompt: "{} Answer in one word."
+  seed: 42
+  output_dir: "output/LLaVA/VQA/TextVQA_ZeroShot"
+
+  evaluate: true
+  test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True

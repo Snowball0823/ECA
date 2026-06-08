@@ -1,0 +1,83 @@
+model:
+  arch: pa_internvl_general
+  model_type: cl_vqa_internvl2_5
+  # `model_path` selects the InternVL2.5 checkpoint size, e.g. 1B, 4B, or 8B.
+
+  load_pretrained: true
+  # model_path: checkpoints/InternVL/InternVL2_5-1B
+  model_path: checkpoints/InternVL/InternVL2_5-4B
+  use_flash_attn: false
+  llm_config:
+    attn_implementation: eager
+    _attn_implementation: eager
+
+  template: internvl2_5
+  select_layer: -1
+  force_image_size: 448
+  dynamic_image_size: true
+  use_thumbnail: true
+  ps_version: v2
+  min_dynamic_patch: 1
+  max_dynamic_patch: 4
+  downsample_ratio: 0.5
+  model_max_length: 8192
+  drop_path_rate: 0.0
+  # Soft prompt / MoQ --------------------------------------------------
+  soft_prompt_len: 32
+  use_prompt_anchor: false
+  mix_query: false
+  kd_weight: 0.1
+  ortho: true
+  ortho_weight: 1.0
+
+
+  dict_patch_blocks: 1
+  max_txt_len: 16384
+  max_answer_len: 10
+  prompt: ""
+  kd_prompt: "What is in the image? Answer in one sentence."
+  use_ocr_input: false
+
+datasets:
+  cl_textvqa_vqa_internvl:
+    vis_processor:
+      eval:
+        name: internvl_image_eval
+        image_size: 448
+        dynamic_image_size: true
+        use_thumbnail: true
+        min_dynamic_patch: 1
+        max_dynamic_patch: 4
+        pad2square: false
+        normalize_type: imagenet
+    text_processor:
+      eval:
+        name: "blip_question"
+
+run:
+  runner: runner_cl
+  task: eca_internvl_vqa
+  batch_size_train: 32
+  batch_size_eval: 2
+  num_workers: 4
+
+  max_len: 10
+  min_len: 1
+  num_beams: 1
+  temperature: 0.0
+  top_p: null
+
+  init_topic: 1
+  topic_per_task: 1
+
+  prompt: "{} Answer the question using a single word or phrase."
+  seed: 42
+  output_dir: "output/InternVL/VQA/TextVQA_ZeroShot"
+
+  evaluate: true
+  test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True

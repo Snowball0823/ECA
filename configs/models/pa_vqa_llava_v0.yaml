@@ -1,0 +1,45 @@
+model:
+  arch: pa_llava_v0_general
+  model_type: cl_vqa_llava_v0
+
+  # Checkpoint / loader ------------------------------------------------
+  load_pretrained: true
+  model_path: checkpoints/LLaVA/llava-7b-v0
+  model_base: checkpoints/LLaVA/vicuna-7b-v0
+  model_name: llava-v0
+  load_finetuned: false
+  mm_use_im_patch_token: false
+  mm_use_im_start_end: true
+
+  # Vision & adapters --------------------------------------------------
+  freeze_vit: true
+  vision_lora_r: 16
+  vision_lora_alpha: 32
+
+  # Soft prompt / MoQ --------------------------------------------------
+  soft_prompt_len: 32
+  use_prompt_anchor: false
+  mix_query: true
+  kd_weight: 0.1
+  ortho: true
+  ortho_weight: 1.0
+
+  # Adapter settings ---------------------------------------------------
+  alignment_layers: 6
+  mh_pa_r: 32.0
+  mh_pa_dropout: 0.0
+  mh_pa_scale: 4.0
+  ffn_pa_r: 8.0
+  ffn_pa_dropout: 0.0
+  ffn_pa_scale: 4.0
+
+  # Text / prompts -----------------------------------------------------
+  # max_txt_len: 128
+  max_answer_len: 32
+  prompt: ""
+  use_ocr_input: true
+  conversation_template: |-
+    A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions.
+    ### Human: {}
+    ### Assistant: 
+  kd_prompt: "What is in the image? Answer in one sentence."

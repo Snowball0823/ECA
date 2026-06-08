@@ -1,0 +1,40 @@
+# Runtime outputs and local editor state
+output/
+.vscode/
+.codex
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# OS and local environment noise
+.DS_Store
+.env
+.venv/
+venv/
+
+# Large model weights and checkpoints
+checkpoints/*
+!checkpoints/README.md
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+
+# Hugging Face upload staging
+ECA-ToS-Benchmarks/
+
+# Dataset cache payloads. Keep only .gitkeep directory skeletons.
+cache/**/*.json
+cache/**/*.jpg
+cache/**/*.jpeg
+cache/**/*.png
+cache/**/*.zip
+cache/**/*.txt
+!cache/**/.gitkeep

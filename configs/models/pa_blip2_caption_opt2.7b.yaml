@@ -1,0 +1,49 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: caption_coco_opt2.7b
+  load_finetuned: True
+
+  pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_opt2.7b.pth"
+  finetuned: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_caption_opt2.7b.pth"
+
+  # vit encoder
+  image_size: 364
+  drop_path_rate: 0
+  use_grad_checkpoint: False
+  vit_precision: "fp32"
+  freeze_vit: False
+
+  # Q-Former
+  num_query_token: 32
+
+  # Parallel Adapter
+  mh_pa_r: 25.0
+  mh_pa_drop_out: 0.0
+  mh_pa_s: 4.0
+  ffn_pa_r: 1.5
+  ffn_pa_drop_out: 0.0
+  ffn_pa_s: 4.0
+
+  # Lora-visiual encoder
+  r: 16
+  alpha: 32
+
+  # MoQ
+  mix_query: True
+
+  # KD weight
+  kd_weight: 0.1
+
+  # Ortho weight
+  ortho: True
+  ortho_weight: 1.0
+
+  # OPT
+  opt_model: "facebook/opt-2.7b"
+
+  # generation configs
+  prompt: "a photo of"

@@ -1,0 +1,108 @@
+# ===================== Model definition =====================
+model:
+  arch: pa_llava_v0_general
+  model_type: cl_vqa_llava_v0
+  # initialize from pretrained LLaVA weights
+  load_pretrained: true
+  model_path: checkpoints/LLaVA/llava-7b-v0
+  model_base: null
+  model_name: llava-v0
+  # number of learned tokens prepended before language model input
+  soft_prompt_len: 32
+  # transformer blocks with PA inserted
+  alignment_layers: 6
+  # enable mixture-of-query module for prompt adaptation
+  mix_query: false
+  # KL loss weight for KD during replay
+  kd_weight: 0.1
+  prompt: ""
+  kd_prompt: "What is in the image? Answer in one sentence."
+
+# ===================== Dataset + processors =====================
+datasets:
+  cl_textvqa_vqa:
+    vis_processor:
+      train:
+        name: llava_clip_image_train
+        visual_encoder_name: openai/clip-vit-large-patch14
+      eval:
+        name: llava_clip_image_eval
+        visual_encoder_name: openai/clip-vit-large-patch14
+    text_processor:
+      train:
+        name: "blip_prompt_question"
+        prompt: "{} Answer in one word."
+      eval:
+        name: "blip_question"
+
+# ===================== Training / runner settings =====================
+run:
+  # continual-learning runner for multi-topic VQA
+  runner: runner_cl
+  task: eca_llava_lwf_vqa
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 1e-5
+  min_lr: 0
+  warmup_lr: 1e-8
+  warmup_steps: 100
+  weight_decay: 0.05
+  lr_layer_decay: 0.95
+  max_epoch: 5
+  batch_size_train: 4
+  batch_size_eval: 16
+  num_workers: 32
+  accum_grad_iters: 1
+
+  max_len: 8
+  min_len: 1
+  num_beams: 1
+  temperature: 0.2
+  top_p: null
+
+  # number of topics used in first task
+  init_topic: 1
+  # new topics added per subsequent task
+  topic_per_task: 1
+
+  # decide whether to expand PA based on FIM similarity
+  expand_pa: true
+  fim_metric: "i_fim"
+  fim_threshold: 1.0
+  # EWC setting
+  use_ewc: false
+  # set true to only tune visual LoRA in first task
+  lora_visual_first: false
+
+# ---------- Optional replay/dictionary learning ----------
+  dictionary_learning:
+    use_dictionary: false
+    n_components: 20480
+    alpha: 1.0
+    iter: 1
+    fit_algorithm: "ista"
+    constrained: true
+    maxiter: 200
+    tol: 1e-5
+    positive_code: true
+    backtrack: false
+    fast: true
+    accum_batch: 1
+
+  prompt: "{} Answer in one word."
+  seed: 42
+  output_dir: "output/LLaVA/VQA/TextVQA_LwF"
+
+  # enable mixed precision training
+  amp: true
+  resume_ckpt_path: null
+  # resume_ckpt_path: "/path/to/checkpoint_final.pth"
+  evaluate: false
+  train_splits: ["train"]
+  valid_splits: ["val"]
+  test_splits: ["test"]
+
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  # set false to disable DDP
+  distributed: True
