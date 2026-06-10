@@ -3,15 +3,15 @@
   <desc id="desc">Supported backbones, reproduced methods, setup steps, checkpoints, and runnable configs.</desc>
   <defs>
     <radialGradient id="glow" cx="18%" cy="12%" r="90%">
-      <stop offset="0" stop-color="#60a5fa" stop-opacity="0.16"/>
-      <stop offset="0.58" stop-color="#7c3aed" stop-opacity="0.035"/>
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0.24"/>
+      <stop offset="0.58" stop-color="#7c3aed" stop-opacity="0.07"/>
       <stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>
     </radialGradient>
     <filter id="shadow" x="-10%" y="-30%" width="120%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.10"/></filter>
     <style>.title{font:900 38px 'Segoe UI',Arial,sans-serif;fill:#111827}.subtitle{font:600 18px 'Segoe UI',Arial,sans-serif;fill:#334155}.mark{fill:#2563eb;opacity:.85}</style>
   </defs>
   <g filter="url(#shadow)">
-    <rect x="18" y="18" width="1064" height="114" rx="24" fill="#60a5fa" fill-opacity="0.055" stroke="#60a5fa" stroke-opacity="0.18"/>
+    <rect x="18" y="18" width="1064" height="114" rx="24" fill="#60a5fa" fill-opacity="0.13" stroke="#60a5fa" stroke-opacity="0.28"/>
     <rect x="18" y="18" width="1064" height="114" rx="24" fill="url(#glow)" opacity="0.65"/>
     <rect x="44" y="42" width="7" height="66" rx="3.5" class="mark"/>
     <text x="72" y="69" class="title">Codebase</text>

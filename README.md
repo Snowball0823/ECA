@@ -33,9 +33,9 @@
   </picture>
 </p>
 
-<h3 id="overview" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Overview</h3>
+## Overview
 
-<div style="font-size: 1.08em; line-height: 1.65">
+<div>
 
 <p>ECA addresses <strong>incremental learning for Open-ended Image-to-Text Generation</strong>, where a vision-language model must keep generating accurate and context-aware text as visual distributions change over time. This setting covers <strong>image captioning</strong> and <strong>open-ended VQA</strong>, and it reflects a common deployment scenario where new images arrive from evolving environments.</p>
 
@@ -45,7 +45,7 @@
 
 </div>
 
-<h3 id="why-this-problem-is-different" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Why This Problem Is Different</h3>
+## Why This Problem Is Different
 
 <table>
 <tr>
@@ -66,14 +66,14 @@ This setting makes continual learning more realistic. The model must learn the n
 </tr>
 </table>
 
-<h3 id="method" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Method</h3>
+## Method
 
 <div style="font-size: 1.04em; line-height: 1.65; margin-bottom: 18px;">
 <p><strong>ECA adapts the alignment path instead of the full vision-language model.</strong> The vision encoder and language model remain frozen. New knowledge is learned through lightweight modules placed where visual representations are connected to language generation.</p>
 </div>
 
 
-<h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ Which VLM architectures does ECA support</h4>
+### ❓ Which VLM architectures does ECA support
 
 ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based MLLMs such as LLaVA-v0. In both cases, ECA updates the alignment module while keeping the major pretrained modules frozen.
 
@@ -85,7 +85,7 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
   </picture>
 </div>
 
-<h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ What does ECA comprise</h4>
+### ❓ What does ECA comprise
 
 <div align="center">
   <picture>
@@ -95,9 +95,9 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
   </picture>
 </div>
 
-<h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ How is ECA instantiated</h4>
+### ❓ How is ECA instantiated
 
-<h4 style="font-size: 1.18em; font-weight: 800; margin-top: 14px;">BLIP-2-style VLMs</h4>
+#### BLIP-2-style VLMs
 
 <p>For BLIP-2-style VLMs, a frozen visual encoder produces patch embeddings. MoQ aggregates task-specific queries with pretrained queries, FeDEx equips the Q-Former with expandable parallel adapters, and DR replays the embedding dictionary to retain former alignment.</p>
 
@@ -107,7 +107,7 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
   <em>ECA instantiated on BLIP-2-style VLMs.</em>
 </div>
 
-<h4 style="font-size: 1.18em; font-weight: 800; margin-top: 22px;">Projector-based MLLMs</h4>
+#### Projector-based MLLMs
 
 <p>For projector-based MLLMs, a frozen visual encoder with a pretrained projector produces visual tokens. MoQ generates soft prompt tokens, FeDEx adapts the top L LLM layers, and DR replays dictionary atoms as visual tokens to preserve past visual semantics.</p>
 
@@ -117,7 +117,7 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
   <em>ECA instantiated on projector-based MLLMs.</em>
 </div>
 
-<h3 id="benchmarks-and-topic-splits" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Benchmarks</h3>
+## Benchmarks
 
 <div style="font-size: 1.04em; line-height: 1.65; margin-bottom: 16px;">
 <p>To evaluate continual alignment in OpenITG, we build four benchmarks from MSCOCO Caption, VQAv2, TextCaps, and TextVQA. Each benchmark is split by the main topic of an image instead of disjoint object or scene labels. This keeps overlapping semantics inside each task and creates a sequence where the dominant visual topic shifts over time.</p>
@@ -144,7 +144,7 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
 | ToS-TextCaps | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_train.json) · [val](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val.json) · [val-eval](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val_eval.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json) |
 | ToS-TextVQA | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_train.json) · [val](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val.json) · [val-eval](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val_eval.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json) |
 
-<h4 style="font-size: 1.22em; font-weight: 800; margin-top: 20px; margin-bottom: 10px;">Main-topic distributions</h4>
+### Main-topic distributions
 
 <p style="line-height: 1.65; margin-bottom: 14px;">The plots show the topic composition inside each main-topic task. A task is defined by its dominant topic, but other visible topics remain in the samples.</p>
 
@@ -163,7 +163,7 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
 </tr>
 </table>
 
-<h3 id="results-snapshot" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Results Snapshot</h3>
+## Results Snapshot
 
 The main results below are reported with a pretrained BLIP-2 backbone. The visual encoder and LLM are frozen, and ECA is instantiated on the Q-Former alignment module. The parameter column reports trainable parameters only and is checked against Table 1 and Table 2 in the paper.
 
@@ -210,7 +210,7 @@ The main results below are reported with a pretrained BLIP-2 backbone. The visua
   </picture>
 </p>
 
-<h3 id="backbone-coverage" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Backbone Support</h3>
+## Backbone Support
 
 <div style="display: flex; flex-direction: column; gap: 10px; margin: 12px 0 24px 0; font-size: 1.04em; line-height: 1.65;">
 
@@ -236,7 +236,7 @@ The main results below are reported with a pretrained BLIP-2 backbone. The visua
 
 </div>
 
-<h3 id="methods-reproduced" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Methods Reproduced</h3>
+## Methods Reproduced
 
 We include the adapted baseline implementations used in the paper so the continual OpenITG comparisons can be reproduced under the same data split, backbone, and evaluation protocol.
 
@@ -249,9 +249,9 @@ We include the adapted baseline implementations used in the paper so the continu
 <li style="margin: 8px 0;"><span style="display: inline-block; padding: 2px 8px; border-radius: 6px; background: rgba(30, 41, 59, 0.82); color: #f8fafc; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 700;">ModalPrompt</span> <a href="https://aclanthology.org/2025.emnlp-main.609/">[paper]</a> · <a href="models/ModalPrompt_Q/">code</a> · <a href="configs/train/eca_llava_mp_cl_train_textvqa.yaml">config</a> <span style="color: #94a3b8;">BLIP-2 ☑️ · LLaVA-v0 ☑️ · InternVL-2.5 ☑️</span></li>
 </ul>
 
-<h3 id="quick-start" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Quick Start</h3>
+## Quick Start
 
-<h4 style="font-size: 1.22em; font-weight: 850; margin-top: 24px; margin-bottom: 10px;">🧰 Environment</h4>
+### 🧰 Environment
 
 ECA registers BLIP-2, LLaVA-v0, and InternVL modules at startup.
 
@@ -294,7 +294,7 @@ uv pip install --no-deps -e third_party/InternVL/internvl_chat
 
 👉 ECA does not use BLIP-Diffusion, so the bash scripts disable its model registration by default with `export ECA_ENABLE_BLIP_DIFFUSION=${ECA_ENABLE_BLIP_DIFFUSION:-0}`. Set `ECA_ENABLE_BLIP_DIFFUSION=1` only if you want to restore the original LAVIS BLIP-Diffusion registration and have installed its optional dependencies.
 
-<h4 style="font-size: 1.22em; font-weight: 850; margin-top: 24px; margin-bottom: 10px;">🗂️ ToS Annotations</h4>
+### 🗂️ ToS Annotations
 
 The ToS benchmark annotations are hosted on 🤗 Hugging Face at [Snowball0823/ECA-ToS-Benchmarks](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks). Download them into the runtime `cache/` layout before training or evaluation.
 
@@ -311,7 +311,7 @@ cp ECA-ToS-Benchmarks/annotations/text/*.json cache/TextCaps/
 
 Images are not redistributed with the ToS annotations. Download the original MSCOCO, TextCaps, and TextVQA images from their official sources and place them under `cache/coco/images/` and `cache/TextCaps/images/`.
 
-<h4 style="font-size: 1.22em; font-weight: 850; margin-top: 24px; margin-bottom: 10px;">🧩 Pretrained Checkpoints</h4>
+### 🧩 Pretrained Checkpoints
 
 🎯 **BLIP-2**
 
@@ -352,7 +352,7 @@ LLaVA-v0 requires the full merged checkpoint. Follow the official LLaVA weight p
 👉 <picture><source media="(prefers-color-scheme: light)" srcset="content/pictures/github_mark_dark.svg"><source media="(prefers-color-scheme: dark)" srcset="content/pictures/github_mark_light.svg"><img src="content/pictures/github_mark_dark.svg" width="16" height="16" alt="GitHub"></picture> LLaVA official weight instructions [link](https://github.com/haotian-liu/LLaVA#llava-weights)
 
 
-<h4 style="font-size: 1.22em; font-weight: 850; margin-top: 24px; margin-bottom: 10px;">🚀 Train</h4>
+### 🚀 Train
 
 Example ECA training command:
 
@@ -369,7 +369,7 @@ NPROC_PER_NODE=4 bash train.sh configs/train/ecaq_cl_train_cap.yaml
 Before launching a fresh run, check whether the selected config contains stale `resume_ckpt_path`, `output_dir`, or local checkpoint paths from a previous machine.
 
 
-<h3 id="config-map" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Config Map</h3>
+## Config Map
 
 Paper-main BLIP-2/Q-Former training configs:
 
@@ -387,7 +387,7 @@ Backbone extension examples:
 | LLaVA-v0 | `configs/train/eca_llava_cl_train_cap.yaml` |
 | InternVL | `configs/train/eca_internvl_cl_train_textvqa.yaml` |
 
-<h2 id="citation" style="font-size: 2.05em; font-weight: 850; margin-top: 34px; margin-bottom: 16px;">Citation</h2>
+## Citation
 
 If this repository is useful for your research, please cite:
 
@@ -401,7 +401,7 @@ If this repository is useful for your research, please cite:
 }
 ```
 
-<h2 id="acknowledgements" style="font-size: 2.05em; font-weight: 850; margin-top: 34px; margin-bottom: 16px;">Acknowledgements</h2>
+## Acknowledgements
 
 This codebase builds on the following third-party projects and research code. Please also follow their licenses and usage requirements.
 
