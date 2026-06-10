@@ -26,7 +26,11 @@
 <a id="paper-introduction"></a>
 
 <p align="center">
-  <img src="content/pictures/paper_intro_banner.svg" alt="Paper Introduction" width="100%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="content/pictures/paper_intro_banner_light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="content/pictures/paper_intro_banner.svg">
+    <img src="content/pictures/paper_intro_banner_light.svg" alt="Paper Introduction" width="100%">
+  </picture>
 </p>
 
 <h3 id="overview" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Overview</h3>
@@ -74,13 +78,21 @@ This setting makes continual learning more realistic. The model must learn the n
 ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based MLLMs such as LLaVA-v0. In both cases, ECA updates the alignment module while keeping the major pretrained modules frozen.
 
 <div align="center">
-  <img src="content/pictures/vlm_architectures.svg" alt="Supported VLM architectures" width="96%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="content/pictures/vlm_architectures_light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="content/pictures/vlm_architectures.svg">
+    <img src="content/pictures/vlm_architectures_light.svg" alt="Supported VLM architectures" width="96%">
+  </picture>
 </div>
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ What does ECA comprise</h4>
 
 <div align="center">
-  <img src="content/pictures/eca_components.svg" alt="ECA core components" width="96%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="content/pictures/eca_components_light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="content/pictures/eca_components.svg">
+    <img src="content/pictures/eca_components_light.svg" alt="ECA core components" width="96%">
+  </picture>
 </div>
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ How is ECA instantiated</h4>
@@ -115,7 +127,11 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
 
 <div align="center">
   <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations">
-    <img src="content/pictures/benchmark_cards.svg" alt="ECA ToS benchmark cards" width="96%">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="content/pictures/benchmark_cards_light.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="content/pictures/benchmark_cards.svg">
+      <img src="content/pictures/benchmark_cards_light.svg" alt="ECA ToS benchmark cards" width="96%">
+    </picture>
   </a>
 </div>
 
@@ -152,7 +168,11 @@ ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based
 The main results below are reported with a pretrained BLIP-2 backbone. The visual encoder and LLM are frozen, and ECA is instantiated on the Q-Former alignment module. The parameter column reports trainable parameters only and is checked against Table 1 and Table 2 in the paper.
 
 <div align="center">
-  <img src="content/pictures/metric_guide.svg" alt="Metric guide" width="96%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="content/pictures/metric_guide_light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="content/pictures/metric_guide.svg">
+    <img src="content/pictures/metric_guide_light.svg" alt="Metric guide" width="96%">
+  </picture>
 </div>
 
 <table align="center">
@@ -183,7 +203,11 @@ The main results below are reported with a pretrained BLIP-2 backbone. The visua
 <a id="codebase"></a>
 
 <p align="center">
-  <img src="content/pictures/codebase_banner.svg" alt="Codebase" width="100%">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="content/pictures/codebase_banner_light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="content/pictures/codebase_banner.svg">
+    <img src="content/pictures/codebase_banner_light.svg" alt="Codebase" width="100%">
+  </picture>
 </p>
 
 <h3 id="backbone-coverage" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Backbone Support</h3>
@@ -325,7 +349,7 @@ LLaVA-v0 requires the full merged checkpoint. Follow the official LLaVA weight p
 
 👉 🤗 InternVL2.5-8B [link](https://huggingface.co/OpenGVLab/InternVL2_5-8B)
 
-👉 <img src="content/pictures/github_mark_light.svg" width="16" height="16" alt="GitHub" style="vertical-align: -3px;"> LLaVA official weight instructions [link](https://github.com/haotian-liu/LLaVA#llava-weights)
+👉 <picture><source media="(prefers-color-scheme: light)" srcset="content/pictures/github_mark_dark.svg"><source media="(prefers-color-scheme: dark)" srcset="content/pictures/github_mark_light.svg"><img src="content/pictures/github_mark_dark.svg" width="16" height="16" alt="GitHub"></picture> LLaVA official weight instructions [link](https://github.com/haotian-liu/LLaVA#llava-weights)
 
 
 <h4 style="font-size: 1.22em; font-weight: 850; margin-top: 24px; margin-bottom: 10px;">🚀 Train</h4>
