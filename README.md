@@ -21,12 +21,13 @@
 
 </div>
 
-<hr style="border: 0; border-top: 2px solid rgba(148, 163, 184, 0.35); margin: 42px 0 26px 0;">
+---
 
-<div id="paper-introduction" style="padding: 18px 22px; border-radius: 18px; background: linear-gradient(135deg, rgba(251, 146, 60, 0.14), rgba(37, 99, 235, 0.08)); margin: 0 0 24px 0;">
-<h2 style="font-size: 2.05em; font-weight: 900; margin: 0 0 8px 0;">Paper Introduction</h2>
-<p style="margin: 0; line-height: 1.6;">Motivation, method design, benchmarks, and main results from the ICML paper.</p>
-</div>
+<a id="paper-introduction"></a>
+
+<p align="center">
+  <img src="content/pictures/paper_intro_banner.svg" alt="Paper Introduction" width="100%">
+</p>
 
 <h3 id="overview" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Overview</h3>
 
@@ -42,27 +43,24 @@
 
 <h3 id="why-this-problem-is-different" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Why This Problem Is Different</h3>
 
-<div style="display: flex; align-items: flex-start; gap: 24px;">
+<table>
+<tr>
+<td width="42%" valign="top">
 
-<div style="flex: 1 1 48%; line-height: 1.65;">
+Existing continual image-to-text protocols often build tasks from disjoint object categories or scene labels. This gives clear task boundaries, but it also removes many natural images that contain multiple topics. As a result, the task sequence becomes less similar to the visual streams that models face in deployment.
 
-<p>Existing continual image-to-text protocols often build tasks from disjoint object categories or scene labels. This gives clear task boundaries, but it also removes many natural images that contain multiple topics. As a result, the task sequence becomes less similar to the visual streams that models face in deployment.</p>
+ECA uses <strong>main topic splits</strong>. Each image is assigned to a task by its dominant semantic topic, while other visible topics remain in the sample. The tasks still shift over time, but shared concepts can appear across different tasks.
 
-<p>ECA uses <strong>main topic splits</strong>. Each image is assigned to a task by its dominant semantic topic, while other visible topics remain in the sample. The tasks still shift over time, but shared concepts can appear across different tasks.</p>
+This setting makes continual learning more realistic. The model must learn the new dominant topic while preserving alignment for earlier concepts that may reappear later.
 
-<p>This setting makes continual learning more realistic. The model must learn the new dominant topic while preserving alignment for earlier concepts that may reappear later.</p>
-
-</div>
-
-<div style="flex: 1 1 52%; text-align: center;">
-
+</td>
+<td width="58%" valign="top" align="center">
 <img src="content/pictures/Motivation.png" alt="Main-topic continual OpenITG motivation" width="100%">
 <br>
 <em>Main-topic split with realistic cross-topic overlap.</em>
-
-</div>
-
-</div>
+</td>
+</tr>
+</table>
 
 <h3 id="method" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Method</h3>
 
@@ -73,41 +71,16 @@
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ Which VLM architectures does ECA support</h4>
 
-<p>ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based MLLMs such as LLaVA-v0. In both cases, ECA updates the alignment module while keeping the major pretrained modules frozen.</p>
+ECA is instantiated on BLIP-2-style VLMs and further extended to projector-based MLLMs such as LLaVA-v0. In both cases, ECA updates the alignment module while keeping the major pretrained modules frozen.
 
-<div style="display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 24px 0;">
-
-<div style="flex: 1 1 320px; border-left: 5px solid #64748b; padding: 12px 16px; background: rgba(100, 116, 139, 0.10); border-radius: 0 12px 12px 0;">
-<h4 style="font-size: 1.12em; font-weight: 850; margin: 0 0 8px 0;">BLIP-2-style VLMs</h4>
-<p style="margin: 0; line-height: 1.6;">BLIP-2 exposes the alignment module as a Q-Former, which connects a frozen visual encoder and a frozen language model. ECA adapts this Q-Former to study continual alignment.</p>
-</div>
-
-<div style="flex: 1 1 320px; border-left: 5px solid #64748b; padding: 12px 16px; background: rgba(100, 116, 139, 0.10); border-radius: 0 12px 12px 0;">
-<h4 style="font-size: 1.12em; font-weight: 850; margin: 0 0 8px 0;">Projector-based MLLMs</h4>
-<p style="margin: 0; line-height: 1.6;">LLaVA-v0 uses a visual projector to map visual features into the language token space, and relies on LLM self-attention for visual-language alignment. ECA treats the top L LLM layers as the effective alignment module.</p>
-</div>
-
+<div align="center">
+  <img src="content/pictures/vlm_architectures.svg" alt="Supported VLM architectures" width="96%">
 </div>
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ What does ECA comprise</h4>
 
-<div style="display: flex; flex-direction: column; gap: 12px; margin: 12px 0 24px 0;">
-
-<div style="border-left: 5px solid #fbbf24; padding: 12px 16px; background: rgba(251, 191, 36, 0.14); border-radius: 0 12px 12px 0;">
-<h4 style="margin: 0 0 8px 0;"><span style="display: inline-block; padding: 3px 9px; border-radius: 5px; background: #b45309; color: #ffffff;"><span style="background: #fde68a; color: #111827; padding: 3px 6px; margin-left: -9px; margin-right: 8px; border-radius: 5px 0 0 5px;">🧭</span>Mixture of Query (MoQ)</span></h4>
-<p style="margin: 0; line-height: 1.6;">MoQ learns task-specific query tokens and mixes them with pretrained queries, allowing the alignment module to capture new visual-text cues while preserving the pretrained query space.</p>
-</div>
-
-<div style="border-left: 5px solid #60a5fa; padding: 12px 16px; background: rgba(96, 165, 250, 0.14); border-radius: 0 12px 12px 0;">
-<h4 style="margin: 0 0 8px 0;"><span style="display: inline-block; padding: 3px 9px; border-radius: 5px; background: #2563eb; color: #ffffff;"><span style="background: #dbeafe; color: #111827; padding: 3px 6px; margin-left: -9px; margin-right: 8px; border-radius: 5px 0 0 5px;">🚀</span>Fisher Dynamic Expansion (FeDEx)</span></h4>
-<p style="margin: 0; line-height: 1.6;">FeDEx measures task interference with an FIM-based signal and expands parallel adapters only when additional alignment capacity is needed.</p>
-</div>
-
-<div style="border-left: 5px solid #c084fc; padding: 12px 16px; background: rgba(192, 132, 252, 0.14); border-radius: 0 12px 12px 0;">
-<h4 style="margin: 0 0 8px 0;"><span style="display: inline-block; padding: 3px 9px; border-radius: 5px; background: #7c3aed; color: #ffffff;"><span style="background: #f3e8ff; color: #111827; padding: 3px 6px; margin-left: -9px; margin-right: 8px; border-radius: 5px 0 0 5px;">📖</span>Dictionary Replay (DR)</span></h4>
-<p style="margin: 0; line-height: 1.6;">DR stores compact visual knowledge in a sparse embedding dictionary and replays reconstructed embeddings instead of keeping raw images from previous tasks.</p>
-</div>
-
+<div align="center">
+  <img src="content/pictures/eca_components.svg" alt="ECA core components" width="96%">
 </div>
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 22px; margin-bottom: 10px;">❓ How is ECA instantiated</h4>
@@ -138,215 +111,80 @@
 <p>To evaluate continual alignment in OpenITG, we build four benchmarks from MSCOCO Caption, VQAv2, TextCaps, and TextVQA. Each benchmark is split by the main topic of an image instead of disjoint object or scene labels. This keeps overlapping semantics inside each task and creates a sequence where the dominant visual topic shifts over time.</p>
 </div>
 
-<style>
-@media (prefers-color-scheme: dark) {
-  .eca-card-coco { background: linear-gradient(135deg, rgba(251, 113, 133, 0.34), rgba(251, 146, 60, 0.14)) !important; }
-  .eca-badge-coco { background: rgba(251, 113, 133, 0.36) !important; color: #fecdd3 !important; }
-  .eca-label-coco { color: #fb7185 !important; }
-  .eca-card-vqa { background: linear-gradient(135deg, rgba(96, 165, 250, 0.38), rgba(37, 99, 235, 0.16)) !important; }
-  .eca-badge-vqa { background: rgba(96, 165, 250, 0.32) !important; color: #dbeafe !important; }
-  .eca-label-vqa { color: #60a5fa !important; }
-  .eca-card-textcaps { background: linear-gradient(135deg, rgba(251, 191, 36, 0.36), rgba(249, 115, 22, 0.14)) !important; }
-  .eca-badge-textcaps { background: rgba(251, 191, 36, 0.34) !important; color: #fde68a !important; }
-  .eca-label-textcaps { color: #fbbf24 !important; }
-  .eca-card-textvqa { background: linear-gradient(135deg, rgba(192, 132, 252, 0.36), rgba(236, 72, 153, 0.12)) !important; }
-  .eca-badge-textvqa { background: rgba(192, 132, 252, 0.34) !important; color: #f3e8ff !important; }
-  .eca-label-textvqa { color: #c084fc !important; }
-}
-</style>
-
 <p style="line-height: 1.6; margin: 0 0 12px 0;">Each card reports the source dataset, the OpenITG task category, the evaluation metric, and the finalized ToS annotation files. Following the paper, the benchmarks fall into two OpenITG task categories, Image Captioning (IC) and Visual Question Answering (VQA).</p>
 
-<table style="width: 100%; border-collapse: separate; border-spacing: 14px; margin: 6px 0 22px 0;">
-<tr>
-<td style="width: 50%; border: 0; padding: 0; vertical-align: top;">
-<div class="eca-card-coco" style="min-height: 132px; box-sizing: border-box; padding: 18px 20px; border-radius: 16px; background: linear-gradient(135deg, rgba(225, 29, 72, 0.18), rgba(154, 52, 18, 0.08));">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;">
-<h4 style="font-size: 1.1em; font-weight: 850; margin: 0;">ToS-COCO Caption</h4>
-<span class="eca-badge-coco" style="padding: 3px 8px; border-radius: 999px; background: #9f1239; color: #ffffff; font-size: 0.86em;">IC</span>
+<div align="center">
+  <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations">
+    <img src="content/pictures/benchmark_cards.svg" alt="ECA ToS benchmark cards" width="96%">
+  </a>
 </div>
-<div style="display: grid; grid-template-columns: 128px 1fr; row-gap: 7px; line-height: 1.5;">
-<span class="eca-label-coco" style="color: #e11d48; font-weight: 800;">Source Dataset</span><span>MSCOCO Caption</span>
-<span class="eca-label-coco" style="color: #e11d48; font-weight: 800;">Task</span><span>Image Captioning (IC)</span>
-<span class="eca-label-coco" style="color: #e11d48; font-weight: 800;">Metrics</span><span>BLEU-4 · CIDEr · SPICE</span>
-<span class="eca-label-coco" style="color: #e11d48; font-weight: 800;">Annotations</span><span><a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_train.json">train</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_val.json">val</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_test.json">test</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_style_topic_metadata.json">topics</a></span>
-</div>
-</div>
-</td>
-<td style="width: 50%; border: 0; padding: 0; vertical-align: top;">
-<div class="eca-card-vqa" style="min-height: 132px; box-sizing: border-box; padding: 18px 20px; border-radius: 16px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(30, 64, 175, 0.08));">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;">
-<h4 style="font-size: 1.1em; font-weight: 850; margin: 0;">ToS-VQAv2</h4>
-<span class="eca-badge-vqa" style="padding: 3px 8px; border-radius: 999px; background: #1e40af; color: #ffffff; font-size: 0.86em;">VQA</span>
-</div>
-<div style="display: grid; grid-template-columns: 128px 1fr; row-gap: 7px; line-height: 1.5;">
-<span class="eca-label-vqa" style="color: #2563eb; font-weight: 800;">Source Dataset</span><span>VQAv2</span>
-<span class="eca-label-vqa" style="color: #2563eb; font-weight: 800;">Task</span><span>Visual Question Answering (VQA)</span>
-<span class="eca-label-vqa" style="color: #2563eb; font-weight: 800;">Metrics</span><span>VQA accuracy</span>
-<span class="eca-label-vqa" style="color: #2563eb; font-weight: 800;">Annotations</span><span><a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_vqav2_train.json">train</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_vqav2_val_eval.json">val-eval</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_style_topic_metadata.json">topics</a></span>
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td style="width: 50%; border: 0; padding: 0; vertical-align: top;">
-<div class="eca-card-textcaps" style="min-height: 132px; box-sizing: border-box; padding: 18px 20px; border-radius: 16px; background: linear-gradient(135deg, rgba(217, 119, 6, 0.18), rgba(146, 64, 14, 0.08));">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;">
-<h4 style="font-size: 1.1em; font-weight: 850; margin: 0;">ToS-TextCaps</h4>
-<span class="eca-badge-textcaps" style="padding: 3px 8px; border-radius: 999px; background: #92400e; color: #ffffff; font-size: 0.86em;">IC</span>
-</div>
-<div style="display: grid; grid-template-columns: 128px 1fr; row-gap: 7px; line-height: 1.5;">
-<span class="eca-label-textcaps" style="color: #d97706; font-weight: 800;">Source Dataset</span><span>TextCaps</span>
-<span class="eca-label-textcaps" style="color: #d97706; font-weight: 800;">Task</span><span>Image Captioning (IC)</span>
-<span class="eca-label-textcaps" style="color: #d97706; font-weight: 800;">Metrics</span><span>BLEU-4 · CIDEr · SPICE</span>
-<span class="eca-label-textcaps" style="color: #d97706; font-weight: 800;">Annotations</span><span><a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_train.json">train</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val.json">val</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val_eval.json">val-eval</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json">topics</a></span>
-</div>
-</div>
-</td>
-<td style="width: 50%; border: 0; padding: 0; vertical-align: top;">
-<div class="eca-card-textvqa" style="min-height: 132px; box-sizing: border-box; padding: 18px 20px; border-radius: 16px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(91, 33, 182, 0.08));">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px;">
-<h4 style="font-size: 1.1em; font-weight: 850; margin: 0;">ToS-TextVQA</h4>
-<span class="eca-badge-textvqa" style="padding: 3px 8px; border-radius: 999px; background: #5b21b6; color: #ffffff; font-size: 0.86em;">VQA</span>
-</div>
-<div style="display: grid; grid-template-columns: 128px 1fr; row-gap: 7px; line-height: 1.5;">
-<span class="eca-label-textvqa" style="color: #7c3aed; font-weight: 800;">Source Dataset</span><span>TextVQA</span>
-<span class="eca-label-textvqa" style="color: #7c3aed; font-weight: 800;">Task</span><span>Visual Question Answering (VQA)</span>
-<span class="eca-label-textvqa" style="color: #7c3aed; font-weight: 800;">Metrics</span><span>VQA accuracy</span>
-<span class="eca-label-textvqa" style="color: #7c3aed; font-weight: 800;">Annotations</span><span><a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_train.json">train</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val.json">val</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val_eval.json">val-eval</a> · <a href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json">topics</a></span>
-</div>
-</div>
-</td>
-</tr>
-</table>
+
+<p align="center"><em>Click the card panel to open the Hugging Face annotation repository. Individual annotation files are linked below.</em></p>
+
+| Benchmark | Annotation files |
+| --- | --- |
+| ToS-COCO Caption | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_train.json) · [val](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_val.json) · [test](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_caption_test.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_style_topic_metadata.json) |
+| ToS-VQAv2 | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_vqav2_train.json) · [val-eval](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_vqav2_val_eval.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/coco/tos_coco_style_topic_metadata.json) |
+| ToS-TextCaps | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_train.json) · [val](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val.json) · [val-eval](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textcaps_caption_val_eval.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json) |
+| ToS-TextVQA | [train](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_train.json) · [val](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val.json) · [val-eval](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_textvqa_val_eval.json) · [topics](https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/blob/main/annotations/text/tos_text_style_topic_metadata.json) |
 
 <h4 style="font-size: 1.22em; font-weight: 800; margin-top: 20px; margin-bottom: 10px;">Main-topic distributions</h4>
 
 <p style="line-height: 1.65; margin-bottom: 14px;">The plots show the topic composition inside each main-topic task. A task is defined by its dominant topic, but other visible topics remain in the samples.</p>
 
-<div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; margin: 10px 0 4px 0;">
-
-<div style="flex: 1 1 360px; text-align: center;">
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
 <img src="content/pictures/mscoco_distribut.png" alt="MSCOCO-derived topic distribution" width="100%">
-<p style="margin: 8px 0 0 0;"><em>MSCOCO-derived splits for ToS-COCO Caption and ToS-VQAv2.</em></p>
-</div>
-
-<div style="flex: 1 1 360px; text-align: center;">
+<br>
+<em>MSCOCO-derived splits for ToS-COCO Caption and ToS-VQAv2.</em>
+</td>
+<td width="50%" align="center" valign="top">
 <img src="content/pictures/textcap_distribut.png" alt="TextCaps-derived topic distribution" width="100%">
-<p style="margin: 8px 0 0 0;"><em>TextCaps-derived splits for ToS-TextCaps and ToS-TextVQA.</em></p>
-</div>
-
-</div>
+<br>
+<em>TextCaps-derived splits for ToS-TextCaps and ToS-TextVQA.</em>
+</td>
+</tr>
+</table>
 
 <h3 id="results-snapshot" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Results Snapshot</h3>
 
 The main results below are reported with a pretrained BLIP-2 backbone. The visual encoder and LLM are frozen, and ECA is instantiated on the Q-Former alignment module. The parameter column reports trainable parameters only and is checked against Table 1 and Table 2 in the paper.
 
-<div style="padding: 14px 16px; border-radius: 14px; background: rgba(100, 116, 139, 0.10); margin: 14px 0 18px 0;">
-<strong style="font-size: 1.05em;">Metric guide</strong>
-<table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-<tr>
-<td style="width: 150px; border: 0; padding: 7px 10px 7px 0; vertical-align: top;"><span style="padding: 3px 8px; border-radius: 999px; background: rgba(217, 119, 6, 0.20); color: #fbbf24; font-weight: 800;">Captioning</span></td>
-<td style="border: 0; padding: 7px 0; line-height: 1.5;"><strong>BLEU-4</strong> · <strong>CIDEr</strong> · <strong>SPICE</strong></td>
-</tr>
-<tr>
-<td style="width: 150px; border: 0; padding: 7px 10px 7px 0; vertical-align: top;"><span style="padding: 3px 8px; border-radius: 999px; background: rgba(37, 99, 235, 0.20); color: #60a5fa; font-weight: 800;">VQA</span></td>
-<td style="border: 0; padding: 7px 0; line-height: 1.5;"><strong>VQA Acc</strong></td>
-</tr>
-<tr>
-<td style="width: 150px; border: 0; padding: 7px 10px 7px 0; vertical-align: top;"><span style="padding: 3px 8px; border-radius: 999px; background: rgba(124, 58, 237, 0.20); color: #c084fc; font-weight: 800;">Continual</span></td>
-<td style="border: 0; padding: 7px 0; line-height: 1.5;"><strong>Avg</strong> (final average) · <strong>BWT</strong> (backward transfer) · <strong>FWT</strong> (forward transfer)</td>
-</tr>
-</table>
+<div align="center">
+  <img src="content/pictures/metric_guide.svg" alt="Metric guide" width="96%">
 </div>
 
-<div style="overflow-x: auto; margin: 12px 0 26px 0;">
-<table style="width: 100%; border-collapse: collapse; border-radius: 14px; overflow: hidden; background: rgba(100, 116, 139, 0.08);">
+<table align="center">
 <thead>
-<tr style="background: rgba(100, 116, 139, 0.18);">
-<th style="text-align: left; padding: 12px 14px;">Benchmark</th>
-<th style="text-align: left; padding: 12px 14px;">Metric</th>
-<th style="text-align: right; padding: 12px 14px;">Trainable Params</th>
-<th style="text-align: right; padding: 12px 14px;">Avg ↑</th>
-<th style="text-align: right; padding: 12px 14px;">BWT ↑</th>
-<th style="text-align: right; padding: 12px 14px;">FWT ↑</th>
+<tr>
+<th>Benchmark</th>
+<th>Metric</th>
+<th align="right">Trainable Params</th>
+<th align="right">Avg ↑</th>
+<th align="right">BWT ↑</th>
+<th align="right">FWT ↑</th>
 </tr>
 </thead>
 <tbody>
-<tr style="background: rgba(225, 29, 72, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-COCO Caption</strong></td>
-<td style="padding: 11px 14px;">BLEU-4</td>
-<td style="padding: 11px 14px; text-align: right;">12.29M</td>
-<td style="padding: 11px 14px; text-align: right;">43.42</td>
-<td style="padding: 11px 14px; text-align: right;">-0.64</td>
-<td style="padding: 11px 14px; text-align: right;">7.39</td>
-</tr>
-<tr style="background: rgba(225, 29, 72, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-COCO Caption</strong></td>
-<td style="padding: 11px 14px;">CIDEr</td>
-<td style="padding: 11px 14px; text-align: right;">12.29M</td>
-<td style="padding: 11px 14px; text-align: right;">125.56</td>
-<td style="padding: 11px 14px; text-align: right;">-1.86</td>
-<td style="padding: 11px 14px; text-align: right;">20.58</td>
-</tr>
-<tr style="background: rgba(225, 29, 72, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-COCO Caption</strong></td>
-<td style="padding: 11px 14px;">SPICE</td>
-<td style="padding: 11px 14px; text-align: right;">12.29M</td>
-<td style="padding: 11px 14px; text-align: right;">23.80</td>
-<td style="padding: 11px 14px; text-align: right;">-0.35</td>
-<td style="padding: 11px 14px; text-align: right;">3.00</td>
-</tr>
-<tr style="background: rgba(37, 99, 235, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-VQAv2</strong></td>
-<td style="padding: 11px 14px;">VQA Acc</td>
-<td style="padding: 11px 14px; text-align: right;">21.74M</td>
-<td style="padding: 11px 14px; text-align: right;">68.05</td>
-<td style="padding: 11px 14px; text-align: right;">1.81</td>
-<td style="padding: 11px 14px; text-align: right;">16.38</td>
-</tr>
-<tr style="background: rgba(217, 119, 6, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-TextCaps</strong></td>
-<td style="padding: 11px 14px;">BLEU-4</td>
-<td style="padding: 11px 14px; text-align: right;">21.74M</td>
-<td style="padding: 11px 14px; text-align: right;">30.05</td>
-<td style="padding: 11px 14px; text-align: right;">-0.18</td>
-<td style="padding: 11px 14px; text-align: right;">12.13</td>
-</tr>
-<tr style="background: rgba(217, 119, 6, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-TextCaps</strong></td>
-<td style="padding: 11px 14px;">CIDEr</td>
-<td style="padding: 11px 14px; text-align: right;">21.74M</td>
-<td style="padding: 11px 14px; text-align: right;">103.03</td>
-<td style="padding: 11px 14px; text-align: right;">1.94</td>
-<td style="padding: 11px 14px; text-align: right;">39.22</td>
-</tr>
-<tr style="background: rgba(217, 119, 6, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-TextCaps</strong></td>
-<td style="padding: 11px 14px;">SPICE</td>
-<td style="padding: 11px 14px; text-align: right;">21.74M</td>
-<td style="padding: 11px 14px; text-align: right;">16.86</td>
-<td style="padding: 11px 14px; text-align: right;">0.14</td>
-<td style="padding: 11px 14px; text-align: right;">4.39</td>
-</tr>
-<tr style="background: rgba(124, 58, 237, 0.12);">
-<td style="padding: 11px 14px;"><strong>ToS-TextVQA</strong></td>
-<td style="padding: 11px 14px;">VQA Acc</td>
-<td style="padding: 11px 14px; text-align: right;">21.74M</td>
-<td style="padding: 11px 14px; text-align: right;">38.13</td>
-<td style="padding: 11px 14px; text-align: right;">2.36</td>
-<td style="padding: 11px 14px; text-align: right;">19.30</td>
-</tr>
+<tr><td>ToS-COCO Caption</td><td>BLEU-4</td><td align="right">12.29M</td><td align="right">43.42</td><td align="right">-0.64</td><td align="right">7.39</td></tr>
+<tr><td>ToS-COCO Caption</td><td>CIDEr</td><td align="right">12.29M</td><td align="right">125.56</td><td align="right">-1.86</td><td align="right">20.58</td></tr>
+<tr><td>ToS-COCO Caption</td><td>SPICE</td><td align="right">12.29M</td><td align="right">23.80</td><td align="right">-0.35</td><td align="right">3.00</td></tr>
+<tr><td>ToS-VQAv2</td><td>VQA Acc</td><td align="right">21.74M</td><td align="right">68.05</td><td align="right">1.81</td><td align="right">16.38</td></tr>
+<tr><td>ToS-TextCaps</td><td>BLEU-4</td><td align="right">21.74M</td><td align="right">30.05</td><td align="right">-0.18</td><td align="right">12.13</td></tr>
+<tr><td>ToS-TextCaps</td><td>CIDEr</td><td align="right">21.74M</td><td align="right">103.03</td><td align="right">1.94</td><td align="right">39.22</td></tr>
+<tr><td>ToS-TextCaps</td><td>SPICE</td><td align="right">21.74M</td><td align="right">16.86</td><td align="right">0.14</td><td align="right">4.39</td></tr>
+<tr><td>ToS-TextVQA</td><td>VQA Acc</td><td align="right">21.74M</td><td align="right">38.13</td><td align="right">2.36</td><td align="right">19.30</td></tr>
 </tbody>
 </table>
-</div>
 
-<hr style="border: 0; border-top: 2px solid rgba(148, 163, 184, 0.35); margin: 46px 0 26px 0;">
+---
 
-<div id="codebase" style="padding: 18px 22px; border-radius: 18px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(124, 58, 237, 0.10)); margin: 0 0 24px 0;">
-<h2 style="font-size: 2.05em; font-weight: 900; margin: 0 0 8px 0;">Codebase</h2>
-<p style="margin: 0; line-height: 1.6;">Supported backbones, reproduced methods, setup steps, checkpoints, and runnable configs.</p>
-</div>
+<a id="codebase"></a>
+
+<p align="center">
+  <img src="content/pictures/codebase_banner.svg" alt="Codebase" width="100%">
+</p>
 
 <h3 id="backbone-coverage" style="font-size: 1.45em; font-weight: 800; margin-top: 24px; margin-bottom: 12px;">Backbone Support</h3>
 

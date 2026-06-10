@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">ECA results snapshot</title>
+  <desc id="desc">Main ECA results with BLIP-2 backbone on ToS benchmarks.</desc>
+  <defs>
+    <filter id="shadow" x="-8%" y="-15%" width="116%" height="130%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000000" flood-opacity="0.12"/></filter>
+    <style>
+      .title { font: 900 30px 'Segoe UI', Arial, sans-serif; fill: #f8fafc; }
+      .sub { font: 500 17px 'Segoe UI', Arial, sans-serif; fill: #cbd5e1; }
+      .head { font: 800 16px 'Segoe UI', Arial, sans-serif; fill: #f8fafc; }
+      .cell { font: 600 16px 'Segoe UI', Arial, sans-serif; fill: #e5e7eb; }
+      .num { font: 700 16px 'Segoe UI', Arial, sans-serif; fill: #e5e7eb; }
+      .pill { font: 800 15px 'Segoe UI', Arial, sans-serif; fill: #ffffff; }
+      .small { font: 600 14px 'Segoe UI', Arial, sans-serif; fill: #cbd5e1; }
+    </style>
+  </defs>
+  <rect width="1100" height="620" rx="22" fill="#ffffff" fill-opacity="0.025"/>
+  <g filter="url(#shadow)">
+    <rect x="24" y="24" width="1052" height="572" rx="22" fill="#ffffff" fill-opacity="0.035" stroke="#94a3b8" stroke-opacity="0.14"/>
+  </g>
+  <text x="54" y="66" class="title">Results Snapshot</text>
+  <text x="54" y="96" class="sub">Reported with a pretrained BLIP-2 backbone. ECA is instantiated on the Q-Former alignment module.</text>
+
+  <rect x="54" y="126" width="128" height="30" rx="15" fill="#d97706" fill-opacity="0.26"/>
+  <text x="72" y="147" class="pill">Captioning</text>
+  <text x="196" y="147" class="small">BLEU-4 · CIDEr · SPICE</text>
+  <rect x="430" y="126" width="72" height="30" rx="15" fill="#2563eb" fill-opacity="0.26"/>
+  <text x="452" y="147" class="pill">VQA</text>
+  <text x="516" y="147" class="small">VQA Acc</text>
+  <rect x="660" y="126" width="112" height="30" rx="15" fill="#7c3aed" fill-opacity="0.26"/>
+  <text x="680" y="147" class="pill">Continual</text>
+  <text x="786" y="147" class="small">Avg · BWT · FWT, higher is better</text>
+
+  <rect x="54" y="184" width="992" height="42" rx="12" fill="#94a3b8" fill-opacity="0.12"/>
+  <text x="54" y="211" class="head">Benchmark</text>
+  <text x="350" y="211" class="head">Metric</text>
+  <text x="545" y="211" class="head">Trainable Params</text>
+  <text x="735" y="211" class="head">Avg ↑</text>
+  <text x="870" y="211" class="head">BWT ↑</text>
+  <text x="995" y="211" class="head">FWT ↑</text>
+
+  <rect x="54" y="218" width="992" height="34" rx="9" fill="#fb7185" fill-opacity="0.085" stroke="#fb7185" stroke-opacity="0.08"/>
+  <text x="54" y="242" class="cell">ToS-COCO Caption</text>
+  <text x="350" y="242" class="cell">BLEU-4</text>
+  <text x="545" y="242" class="num">12.29M</text>
+  <text x="735" y="242" class="num">43.42</text>
+  <text x="870" y="242" class="num">-0.64</text>
+  <text x="995" y="242" class="num">7.39</text>
+  <rect x="54" y="257" width="992" height="34" rx="9" fill="#fb7185" fill-opacity="0.085" stroke="#fb7185" stroke-opacity="0.08"/>
+  <text x="54" y="281" class="cell">ToS-COCO Caption</text>
+  <text x="350" y="281" class="cell">CIDEr</text>
+  <text x="545" y="281" class="num">12.29M</text>
+  <text x="735" y="281" class="num">125.56</text>
+  <text x="870" y="281" class="num">-1.86</text>
+  <text x="995" y="281" class="num">20.58</text>
+  <rect x="54" y="296" width="992" height="34" rx="9" fill="#fb7185" fill-opacity="0.085" stroke="#fb7185" stroke-opacity="0.08"/>
+  <text x="54" y="320" class="cell">ToS-COCO Caption</text>
+  <text x="350" y="320" class="cell">SPICE</text>
+  <text x="545" y="320" class="num">12.29M</text>
+  <text x="735" y="320" class="num">23.80</text>
+  <text x="870" y="320" class="num">-0.35</text>
+  <text x="995" y="320" class="num">3.00</text>
+  <rect x="54" y="335" width="992" height="34" rx="9" fill="#38bdf8" fill-opacity="0.085" stroke="#38bdf8" stroke-opacity="0.08"/>
+  <text x="54" y="359" class="cell">ToS-VQAv2</text>
+  <text x="350" y="359" class="cell">VQA Acc</text>
+  <text x="545" y="359" class="num">21.74M</text>
+  <text x="735" y="359" class="num">68.05</text>
+  <text x="870" y="359" class="num">1.81</text>
+  <text x="995" y="359" class="num">16.38</text>
+  <rect x="54" y="374" width="992" height="34" rx="9" fill="#fbbf24" fill-opacity="0.085" stroke="#fbbf24" stroke-opacity="0.08"/>
+  <text x="54" y="398" class="cell">ToS-TextCaps</text>
+  <text x="350" y="398" class="cell">BLEU-4</text>
+  <text x="545" y="398" class="num">21.74M</text>
+  <text x="735" y="398" class="num">30.05</text>
+  <text x="870" y="398" class="num">-0.18</text>
+  <text x="995" y="398" class="num">12.13</text>
+  <rect x="54" y="413" width="992" height="34" rx="9" fill="#fbbf24" fill-opacity="0.085" stroke="#fbbf24" stroke-opacity="0.08"/>
+  <text x="54" y="437" class="cell">ToS-TextCaps</text>
+  <text x="350" y="437" class="cell">CIDEr</text>
+  <text x="545" y="437" class="num">21.74M</text>
+  <text x="735" y="437" class="num">103.03</text>
+  <text x="870" y="437" class="num">1.94</text>
+  <text x="995" y="437" class="num">39.22</text>
+  <rect x="54" y="452" width="992" height="34" rx="9" fill="#fbbf24" fill-opacity="0.085" stroke="#fbbf24" stroke-opacity="0.08"/>
+  <text x="54" y="476" class="cell">ToS-TextCaps</text>
+  <text x="350" y="476" class="cell">SPICE</text>
+  <text x="545" y="476" class="num">21.74M</text>
+  <text x="735" y="476" class="num">16.86</text>
+  <text x="870" y="476" class="num">0.14</text>
+  <text x="995" y="476" class="num">4.39</text>
+  <rect x="54" y="491" width="992" height="34" rx="9" fill="#c084fc" fill-opacity="0.085" stroke="#c084fc" stroke-opacity="0.08"/>
+  <text x="54" y="515" class="cell">ToS-TextVQA</text>
+  <text x="350" y="515" class="cell">VQA Acc</text>
+  <text x="545" y="515" class="num">21.74M</text>
+  <text x="735" y="515" class="num">38.13</text>
+  <text x="870" y="515" class="num">2.36</text>
+  <text x="995" y="515" class="num">19.30</text>
+
+  <text x="54" y="578" class="small">The parameter column reports trainable parameters only and follows Table 1 and Table 2 in the paper.</text>
+</svg>

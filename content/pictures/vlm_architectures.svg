@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="270" viewBox="0 0 1100 270" role="img" aria-labelledby="title desc">
+  <title id="title">Supported VLM architectures</title>
+  <desc id="desc">ECA supports BLIP-2-style VLMs and projector-based MLLMs.</desc>
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#94a3b8" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#64748b" stop-opacity="0.035"/>
+    </linearGradient>
+    <filter id="shadow" x="-8%" y="-25%" width="116%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .heading { font: 850 25px 'Segoe UI', Arial, sans-serif; fill: #f8fafc; }
+      .body { font: 500 17px 'Segoe UI', Arial, sans-serif; fill: #d1d5db; }
+    </style>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="24" y="44" width="506" height="182" rx="18" fill="url(#card)"/>
+    <rect x="24" y="44" width="6" height="182" rx="3" fill="#94a3b8" fill-opacity="0.78"/>
+    <text x="54" y="88" class="heading">BLIP-2-style VLMs</text>
+    <text x="54" y="128" class="body">BLIP-2 exposes the alignment module as a</text>
+    <text x="54" y="156" class="body">Q-Former, which connects a frozen visual</text>
+    <text x="54" y="184" class="body">encoder and a frozen language model. ECA</text>
+    <text x="54" y="212" class="body">adapts this Q-Former for continual alignment.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="570" y="44" width="506" height="182" rx="18" fill="url(#card)"/>
+    <rect x="570" y="44" width="6" height="182" rx="3" fill="#94a3b8" fill-opacity="0.78"/>
+    <text x="600" y="88" class="heading">Projector-based MLLMs</text>
+    <text x="600" y="128" class="body">LLaVA-v0 maps visual features into the</text>
+    <text x="600" y="156" class="body">language token space with a visual projector.</text>
+    <text x="600" y="184" class="body">ECA treats the top L LLM layers as the</text>
+    <text x="600" y="212" class="body">effective alignment module.</text>
+  </g>
+</svg>
