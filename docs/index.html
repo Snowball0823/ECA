@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ECA | Efficient Continual Alignment</title>
+    <meta name="description" content="Project page for ECA: Efficient Continual Alignment for Open-Ended Image-to-Text Generation, ICML 2026.">
+    <meta name="theme-color" content="#080b10">
+    <link rel="icon" href="assets/icons/eca_icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css?v=20260625a">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="brand" href="#top" aria-label="ECA home">
+          <img src="assets/icons/eca_icon.svg" alt="" aria-hidden="true">
+          <strong>ECA</strong>
+        </a>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-nav-toggle>
+          <span></span>
+        </button>
+        <div class="nav-links" data-nav-links>
+          <a href="#overview">Overview</a>
+          <a href="#method">Method</a>
+          <a href="#benchmarks">Benchmarks</a>
+          <a href="#results">Results</a>
+          <a href="#code">Code</a>
+          <a class="nav-paper" href="ICML_2026_ECA_CR.pdf">Paper</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-inner paper-hero" data-reveal>
+          <div class="hero-logo">
+            <img src="assets/icons/eca_icon.svg" alt="ECA icon">
+          </div>
+          <div class="venue-row" aria-label="Venue and task">
+            <span class="venue-badge">ICML 2026</span>
+            <span class="venue-subtitle">Exemplar-free continual learning for OpenITG</span>
+          </div>
+          <h1>ECA: Efficient Continual Alignment for Open-Ended Image-to-Text Generation</h1>
+          <p class="author-list">Jiangtao Kong · Peijun Zhao · Chun-Fu Chen · Youngwook Do · Shaohan Hu · Tianyi Zhou · Huajie Shao</p>
+          <div class="hero-summary">
+            <p>
+              <strong>Continual alignment under visual topic shifts.</strong>
+              ECA updates only the alignment module in pretrained VLMs through Mixture of Query (MoQ), Fisher Dynamic Expansion (FeDEx), and Dictionary Replay (DR), learning new OpenITG tasks without storing raw images.
+            </p>
+            <div class="hero-keywords" aria-label="Paper keywords">
+              <span>Keywords</span>
+              <strong>Continual Alignment</strong>
+              <i></i>
+              <strong>Exemplar-free</strong>
+              <i></i>
+              <strong>MoQ</strong>
+              <strong>FeDEx</strong>
+              <strong>DR</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" class="section overview-section">
+        <div class="section-inner overview-grid" data-reveal>
+          <div class="overview-title-block">
+            <p class="section-kicker">Overview</p>
+            <h2>Incremental OpenITG under main-topic shifts</h2>
+            <p>
+              Open-ended Image-to-Text Generation asks VLMs to generate accurate and contextually relevant text for images as visual environments evolve over time.
+            </p>
+          </div>
+          <div class="overview-logic" aria-label="ECA overview logic">
+            <article>
+              <span>Setting</span>
+              <h3>Visual topics change while semantics overlap</h3>
+              <p>
+                ECA studies task sequences defined by an image's main topic. This reflects evolving visual streams where the dominant topic shifts, but secondary topics can reappear across tasks.
+              </p>
+            </article>
+            <article>
+              <span>Challenge</span>
+              <h3>Cross-modal alignment must be preserved</h3>
+              <p>
+                Sequential adaptation can overwrite associations between visual representations and generated language. The alignment module has to learn new task-specific cues without damaging established alignment.
+              </p>
+            </article>
+            <article>
+              <span>Approach</span>
+              <h3>ECA updates only the alignment module</h3>
+              <p>
+                ECA keeps the heavy pretrained modules frozen and combines MoQ, FeDEx, and DR to acquire new OpenITG knowledge without storing raw exemplars from previous tasks.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section problem-section">
+        <div class="section-inner split-grid">
+          <div class="copy-card" data-reveal>
+            <p class="section-kicker">Motivation</p>
+            <h2>Real images contain overlapping topics.</h2>
+            <p>
+              Existing continual image-to-text protocols often build task sequences from <strong>disjoint object or scene labels</strong>. This makes the split easy to define, but it removes images where several topics appear together, making the benchmark less similar to a real visual stream.
+            </p>
+            <p>
+              ECA uses <strong>main-topic splits</strong>. Each image is assigned to a task by its dominant topic, while other visible topics remain in the sample. The task distribution still shifts over time, but shared concepts can reappear later, requiring the model to <strong class="key-claim">learn new topic-specific alignment without forgetting earlier image-text associations</strong>.
+            </p>
+          </div>
+          <figure class="figure-card" data-reveal>
+            <img src="assets/figures/motivation.png" alt="Main-topic continual OpenITG motivation">
+            <figcaption>Main-topic split keeps realistic cross-topic overlap.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="method" class="section method-section">
+        <div class="section-inner">
+          <div class="section-head" data-reveal>
+            <p class="section-kicker">Method</p>
+            <h2>Continual alignment with lightweight modules.</h2>
+            <p>
+              ECA keeps the pretrained vision encoder and language model frozen, and updates only the lightweight module that connects visual representations to language generation. It combines <strong>MoQ</strong> for task-adaptive queries, <strong>FeDEx</strong> for FIM-guided adapter expansion, and <strong>DR</strong> for exemplar-free replay through sparse visual embedding atoms.
+            </p>
+          </div>
+
+          <div class="method-modules" data-reveal aria-label="ECA components">
+            <a class="method-module moq" href="#moq-animation" aria-label="Jump to Mixture of Query animation">
+              <span class="module-badge">MoQ</span>
+              <h3>Mixture of Query</h3>
+              <p>Mixes task-specific queries with pretrained queries so the alignment module can absorb new visual-text cues.</p>
+              <small>View animation</small>
+            </a>
+            <a class="method-module fedex" href="#fedex-animation" aria-label="Jump to Fisher Dynamic Expansion animation">
+              <span class="module-badge">FeDEx</span>
+              <h3>Fisher Dynamic Expansion</h3>
+              <p>Uses an FIM-based interference signal to expand parallel adapters only when more alignment capacity is needed.</p>
+              <small>View animation</small>
+            </a>
+            <a class="method-module dr spotlight" href="#dr-animation" aria-label="Jump to Dictionary Replay animation">
+              <span class="module-badge">DR</span>
+              <h3>Dictionary Replay</h3>
+              <p>Maintains an online dictionary of sparse visual atoms and replays embedding-level memory without storing raw images.</p>
+              <small>View animation</small>
+            </a>
+          </div>
+
+
+
+          <article id="moq-animation" class="mechanism-stage moq-stage" data-reveal data-moq-stage>
+            <div class="stage-topline compact-topline">
+              <div>
+                <p class="module-kicker">Mechanism · Mixture of Query</p>
+                <h3>MoQ routes visual features through a key-value query memory</h3>
+                <p>
+                  Visual embeddings score learned task keys, and the resulting soft weights aggregate the corresponding task-query values into ΔQ. If a backbone provides a pretrained or base query anchor, MoQ adds ΔQ to it; otherwise ΔQ is used directly before the alignment module.
+                </p>
+              </div>
+            </div>
+            <div class="mechanism-map moq-map" aria-label="Mixture of Query animation">
+              <div class="mechanism-flow moq-flow pipeline-flow">
+                <div class="mechanism-node query-node stage-step step-1" data-step="01">
+                  <span class="card-action">visual</span>
+                  <div class="visual-embedding-card compact-embed embedding-t" aria-hidden="true">
+                    <div class="patch-grid compact-grid task-grid-a">
+                      <span></span><span></span><span></span><span></span>
+                      <span></span><span></span><span></span><span></span>
+                      <span></span><span></span><span></span><span></span>
+                      <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="embedding-bars"><span></span><span></span><span></span><span></span></div>
+                  </div>
+                  <strong>Visual embeddings x</strong>
+                  <small>frozen visual encoder produces the routing signal</small>
+                </div>
+
+                <div class="mechanism-node query-node stage-step step-2" data-step="02">
+                  <span class="card-action">memory</span>
+                  <div class="kv-memory" aria-hidden="true">
+                    <div class="kv-row keys"><b>K</b><span></span><span class="active"></span><span></span><span class="active"></span></div>
+                    <div class="kv-row values"><b>Q</b><span></span><span class="active"></span><span></span><span class="active"></span></div>
+                  </div>
+                  <strong>Task key-value memory</strong>
+                  <small>keys route visual features; query values carry task prompts</small>
+                </div>
+
+                <div class="mechanism-node query-node stage-step step-3" data-step="03">
+                  <span class="card-action">aggregate</span>
+                  <div class="query-aggregate" aria-hidden="true">
+                    <div class="attention-weights"><span></span><span class="active"></span><span></span><span class="active"></span></div>
+                    <div class="aggregate-arrow">Σ α<sub>i</sub>Q<sub>i</sub></div>
+                    <div class="delta-query compact-delta"><span></span><span></span><span></span><span></span><span></span></div>
+                  </div>
+                  <strong>Aggregated task query ΔQ</strong>
+                  <small>α = softmax(cos(x, K)) softly combines query values</small>
+                </div>
+
+                <div class="mechanism-node query-node mixed-query-node stage-step step-4" data-step="04">
+                  <span class="card-action">optional base</span>
+                  <div class="optional-query-merge" aria-hidden="true">
+                    <div class="merge-source anchor-source"><em>Q<sub>0</sub></em><i></i><i></i><i></i></div>
+                    <div class="merge-plus">+</div>
+                    <div class="merge-source delta-source"><em>ΔQ</em><i></i><i></i><i></i></div>
+                    <div class="merge-result"><em>Q<sub>MoQ</sub></em><i></i><i></i><i></i></div>
+                  </div>
+                  <strong>MoQ query tokens</strong>
+                  <small>Q<sub>MoQ</sub> = Q<sub>0</sub> + ΔQ when an anchor exists, else ΔQ</small>
+                </div>
+
+                <div class="mechanism-node query-node stage-step step-5" data-step="05">
+                  <span class="card-action">align</span>
+                  <div class="align-card align-module" aria-hidden="true">
+                    <strong>Alignment module</strong>
+                    <small>Q-Former / top-L adapters</small>
+                  </div>
+                  <strong>Query-conditioned alignment</strong>
+                  <small>MoQ tokens condition the lightweight alignment module</small>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article id="fedex-animation" class="mechanism-stage fedex-stage" data-reveal data-fedex-stage>
+            <div class="stage-topline compact-topline">
+              <div>
+                <p class="module-kicker">Mechanism · Fisher Dynamic Expansion</p>
+                <h3>FeDEx expands alignment capacity only when interference is high</h3>
+                <p>
+                  Before training a new task, FeDEx estimates an expansion-probe FIM and computes a normalized FIM-based interference metric. When reusing the current PA would degrade previous alignment, ECA expands a new parallel adapter branch.
+                </p>
+              </div>
+            </div>
+            <div class="mechanism-map fedex-map" aria-label="Fisher Dynamic Expansion animation">
+              <div class="mechanism-flow fedex-flow pipeline-flow">
+                <div class="mechanism-node fedex-node stage-step step-1" data-step="01">
+                  <span class="card-action">batches</span>
+                  <div class="task-signal" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                  <strong>Incoming task batches</strong>
+                  <small>used before training to probe whether expansion is needed</small>
+                </div>
+
+                <div class="mechanism-node fedex-node stage-step step-2" data-step="02">
+                  <span class="card-action">FIM</span>
+                  <div class="fim-map" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span>
+                  </div>
+                  <strong>Expansion-probe FIM</strong>
+                  <small>computed on the current adapter before expansion</small>
+                </div>
+
+                <div class="mechanism-node fedex-node stage-step step-3" data-step="03">
+                  <span class="card-action">correlate</span>
+                  <div class="fim-stack" aria-hidden="true">
+                    <span class="old"></span><span class="old"></span><span class="current"></span>
+                  </div>
+                  <strong>Adapter FIM memory</strong>
+                  <small>derive the normalized FIM-based interference metric</small>
+                </div>
+
+                <div class="mechanism-node fedex-node gate-node stage-step step-4" data-step="04">
+                  <span class="card-action">gate</span>
+                  <div class="capacity-gate" aria-hidden="true">
+                    <div class="meter"><span></span><i></i></div>
+                    <div class="gate-labels"><b>reuse</b><b>expand</b></div>
+                  </div>
+                  <strong>Threshold gate</strong>
+                  <small>if the metric exceeds τ, allocate new PA capacity</small>
+                </div>
+
+                <div class="mechanism-node fedex-node adapter-node stage-step step-5" data-step="05">
+                  <span class="card-action">adapter</span>
+                  <div class="adapter-rack" aria-hidden="true">
+                    <span class="adapter-branch old">PA</span>
+                    <span class="adapter-branch old">PA</span>
+                    <span class="adapter-branch new">new PA</span>
+                  </div>
+                  <strong>Reuse or expand PA</strong>
+                  <small>reuse existing PA when below τ, otherwise insert a new branch</small>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article id="dr-animation" class="dr-stage" data-reveal data-dr-stage>
+            <div class="stage-topline">
+              <div>
+                <p class="module-kicker">Deep Dive · Dictionary Replay</p>
+                <h3>Dictionary Replay builds online embedding memory</h3>
+                <p>
+                  DR learns a sparse embedding dictionary online. Each task first solves sparse codes over the current dictionary, updates the activated atoms, and later replays minibatches sampled from the updated dictionary for embedding-level memory.
+                </p>
+              </div>
+            </div>
+
+            <div class="dr-animation dr-memory-map" aria-label="Dictionary Replay staged online dictionary animation">
+              <section class="dr-lane update-lane" aria-label="Task t dictionary update">
+                <div class="lane-title">
+                  <span>Task t</span>
+                  <strong>solve sparse codes and update dictionary atoms</strong>
+                </div>
+                <div class="dr-flow update-flow pipeline-flow fit-flow">
+                  <div class="memory-node image-node stage-step step-1" data-step="01">
+                    <span class="card-action">image</span>
+                    <div class="real-image-card" aria-hidden="true">
+                      <img src="assets/figures/COCO_train2014_000000384029.jpg" alt="">
+                      <span class="patch-overlay"></span>
+                    </div>
+                    <strong>Task image</strong>
+                    <small>not stored for replay</small>
+                  </div>
+
+                  <div class="memory-node embedding-node stage-step step-2" data-step="02">
+                    <span class="card-action">encode</span>
+                    <div class="visual-embedding-card embedding-t" aria-hidden="true">
+                      <div class="patch-grid compact-grid task-grid-a">
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                      </div>
+                      <div class="embedding-bars"><span></span><span></span><span></span><span></span></div>
+                    </div>
+                    <strong>Visual embeddings x<sub>t</sub></strong>
+                    <small>frozen visual encoder</small>
+                  </div>
+
+                  <div class="memory-node solver-node stage-step step-3" data-step="03">
+                    <span class="card-action">solve</span>
+                    <div class="solver-visual" aria-hidden="true">
+                      <div class="solver-panel code-panel">
+                        <span class="solver-tag">z<sub>t</sub></span>
+                        <div class="sparse-code-only mini-code">
+                          <span class="active high"></span><span></span><span></span><span class="active mid"></span><span></span><span class="active high"></span><span></span><span></span><span></span>
+                        </div>
+                      </div>
+                      <span class="solver-relation"><em>x<sub>t</sub> ≈ z<sub>t</sub>D<sub>t-1</sub></em></span>
+                      <div class="solver-panel dictionary-panel">
+                        <span class="solver-tag">D<sub>t-1</sub></span>
+                        <div class="atom-bank mini-bank">
+                          <span class="atom level-1"></span><span class="atom level-0"></span><span class="atom level-2"></span>
+                          <span class="atom level-1"></span><span class="atom level-0"></span><span class="atom level-2"></span>
+                          <span class="atom level-0"></span><span class="atom level-1"></span><span class="atom level-0"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <strong>Sparse code z<sub>t</sub></strong>
+                    <small>nonzero coefficients select atom slots in the dictionary</small>
+                  </div>
+
+                  <div class="memory-node activation-node stage-step step-4" data-step="04">
+                    <span class="card-action">activate</span>
+                    <div class="atom-bank atom-bank-active" aria-hidden="true">
+                      <span class="atom level-1 selected"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-2"></span>
+                      <span class="atom level-1 selected"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-2 selected"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-1"></span>
+                      <span class="atom level-0"></span>
+                    </div>
+                    <strong>Activated atoms</strong>
+                    <small>selected slots are refined by current embeddings</small>
+                  </div>
+
+                  <div class="memory-node dictionary-node stage-step step-5" data-step="05">
+                    <span class="card-action">update D</span>
+                    <div class="atom-bank updated-bank" aria-hidden="true">
+                      <span class="atom level-4 updated"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-2"></span>
+                      <span class="atom level-3 updated"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-4 updated"></span>
+                      <span class="atom level-0"></span>
+                      <span class="atom level-1"></span>
+                      <span class="atom level-0"></span>
+                    </div>
+                    <strong>Dictionary D<sub>t</sub></strong>
+                    <small>full D<sub>t</sub> is carried forward as compact memory</small>
+                  </div>
+                </div>
+              </section>
+
+              <section class="dr-lane train-lane" aria-label="Task t plus one replay training">
+                <div class="lane-title">
+                  <span>Task t+1</span>
+                  <strong>train with current samples and replay from the updated dictionary</strong>
+                </div>
+                <div class="joint-training-panel pipeline-flow task-next-flow">
+                  <div class="joint-source current-source stage-step step-6" data-step="06">
+                    <span class="card-action">current</span>
+                    <div class="source-pair" aria-hidden="true">
+                      <div class="real-image-card small-real-image">
+                        <img src="assets/figures/COCO_train2014_000000520950.jpg" alt="">
+                        <span class="patch-overlay warm"></span>
+                      </div>
+                      <div class="visual-embedding-card embedding-next compact-embed">
+                        <div class="patch-grid compact-grid task-grid-b">
+                          <span></span><span></span><span></span><span></span>
+                          <span></span><span></span><span></span><span></span>
+                          <span></span><span></span><span></span><span></span>
+                          <span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="embedding-bars"><span></span><span></span><span></span><span></span></div>
+                      </div>
+                    </div>
+                    <strong>Current embeddings x<sub>t+1</sub></strong>
+                    <small>new task objective</small>
+                  </div>
+
+                  <div class="joint-source replay-source stage-step step-7" data-step="07">
+                    <span class="card-action">sample D</span>
+                    <div class="sampled-bank" aria-hidden="true">
+                      <span class="atom level-4"></span>
+                      <span class="atom level-2"></span>
+                      <span class="atom level-3"></span>
+                      <span class="atom level-1"></span>
+                      <span class="atom level-2"></span>
+                      <span class="atom level-4"></span>
+                    </div>
+                    <strong>Samples from updated dictionary</strong>
+                    <small>embedding-level memory without raw exemplars</small>
+                  </div>
+
+                  <div class="memory-node align-node stage-step step-8" data-step="08">
+                    <span class="card-action">train</span>
+                    <div class="align-card align-module" aria-hidden="true">
+                      <strong>Alignment module</strong>
+                      <small>Q-Former / top-L LLM adapters</small>
+                    </div>
+                    <strong>Update alignment module</strong>
+                    <small>current-task loss + dictionary-replay loss</small>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="stage-takeaway">
+              Nonzero sparse codes select dictionary atoms for online update. Later tasks replay minibatches sampled from the updated dictionary instead of storing raw images.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section architecture-section">
+        <div class="section-inner">
+          <div class="section-head" data-reveal>
+            <p class="section-kicker">Backbones</p>
+            <h2>ECA targets the alignment module across VLM styles.</h2>
+          </div>
+          <div class="architecture-grid">
+            <article class="architecture-card" data-reveal>
+              <h3>BLIP-2-style VLMs</h3>
+              <p>BLIP-2 exposes the alignment module as a Q-Former between the frozen visual encoder and frozen language model. ECA adapts this Q-Former for continual alignment.</p>
+              <img src="assets/figures/blip2_pipeline.png" alt="ECA instantiated on BLIP-2-style VLMs">
+            </article>
+            <article class="architecture-card" data-reveal>
+              <h3>Projector-based MLLMs</h3>
+              <p>LLaVA-v0 maps visual features into the language token space with a visual projector. ECA treats the top L LLM layers as the effective alignment module.</p>
+              <img src="assets/figures/projector_pipeline.png" alt="ECA instantiated on projector-based MLLMs">
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="benchmarks" class="section benchmark-section">
+        <div class="section-inner">
+          <div class="section-head" data-reveal>
+            <p class="section-kicker">Benchmarks</p>
+            <h2>Four topic-shifted OpenITG benchmarks.</h2>
+            <p>We refer to these splits as <strong>Topic of Semantic (ToS)</strong> benchmarks. Each benchmark is split by the main topic of an image while preserving cross-topic overlap inside each task. During continual evaluation, models generate text without task-specific IDs.</p>
+          </div>
+
+          <div class="benchmark-grid" data-reveal>
+            <a class="benchmark-card coco" href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations/coco">
+              <span>IC</span>
+              <h3>ToS-COCO Caption</h3>
+              <p>MSCOCO Caption · BLEU-4 · CIDEr · SPICE</p>
+            </a>
+            <a class="benchmark-card vqa" href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations/coco">
+              <span>VQA</span>
+              <h3>ToS-VQAv2</h3>
+              <p>VQAv2 · VQA accuracy</p>
+            </a>
+            <a class="benchmark-card textcaps" href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations/text">
+              <span>IC</span>
+              <h3>ToS-TextCaps</h3>
+              <p>TextCaps · BLEU-4 · CIDEr · SPICE</p>
+            </a>
+            <a class="benchmark-card textvqa" href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks/tree/main/annotations/text">
+              <span>VQA</span>
+              <h3>ToS-TextVQA</h3>
+              <p>TextVQA · VQA accuracy</p>
+            </a>
+          </div>
+
+          <div class="distribution-grid" data-reveal>
+            <figure>
+              <img src="assets/figures/mscoco_distribution.png" alt="MSCOCO-derived topic distribution">
+              <figcaption>MSCOCO-derived splits for ToS-COCO Caption and ToS-VQAv2.</figcaption>
+            </figure>
+            <figure>
+              <img src="assets/figures/text_distribution.png" alt="TextCaps-derived topic distribution">
+              <figcaption>TextCaps-derived splits for ToS-TextCaps and ToS-TextVQA.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="section results-section">
+        <div class="section-inner">
+          <div class="section-head" data-reveal>
+            <p class="section-kicker">Results</p>
+            <h2>ECA improves continual performance with lightweight trainable modules.</h2>
+            <p>The snapshot below reports selected representative BLIP-2 metrics. Full BLEU-4, CIDEr, SPICE, and VQA accuracy results are available in the paper. Avg is the final average performance, BWT measures backward transfer, and FWT measures forward transfer.</p>
+          </div>
+          <div class="results-table-wrap" data-reveal>
+            <table>
+              <thead>
+                <tr>
+                  <th>Benchmark</th>
+                  <th>Metric</th>
+                  <th>Trainable Params</th>
+                  <th>Avg ↑</th>
+                  <th>BWT ↑</th>
+                  <th>FWT ↑</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>ToS-COCO Caption</td><td>CIDEr</td><td>12.29M</td><td>125.56</td><td>-1.86</td><td>20.58</td></tr>
+                <tr><td>ToS-VQAv2</td><td>VQA Acc</td><td>21.74M</td><td>68.05</td><td>1.81</td><td>16.38</td></tr>
+                <tr><td>ToS-TextCaps</td><td>CIDEr</td><td>21.74M</td><td>103.03</td><td>1.94</td><td>39.22</td></tr>
+                <tr><td>ToS-TextVQA</td><td>VQA Acc</td><td>21.74M</td><td>38.13</td><td>2.36</td><td>19.30</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="code" class="section code-section">
+        <div class="section-inner resource-grid">
+          <article class="resource-card" data-reveal>
+            <p class="section-kicker">Code</p>
+            <h2>Reproduce ECA and the adapted baselines.</h2>
+            <p>The codebase supports BLIP-2, LLaVA-v0, and InternVL-2.5 backbones with ToS annotation splits and camera-ready configs.</p>
+            <a class="button primary" href="https://github.com/Snowball0823/ECA">Open GitHub</a>
+          </article>
+          <article class="resource-card" data-reveal>
+            <p class="section-kicker">Dataset</p>
+            <h2>Download the ToS benchmark annotations.</h2>
+            <p>The Hugging Face repository contains ToS annotations and topic metadata. Images should be downloaded from the original source datasets.</p>
+            <a class="button secondary" href="https://huggingface.co/datasets/Snowball0823/ECA-ToS-Benchmarks">Open Dataset</a>
+          </article>
+        </div>
+      </section>
+
+
+      <section id="acknowledgements" class="section acknowledgement-section">
+        <div class="section-inner" data-reveal>
+          <p class="section-kicker">Acknowledgements</p>
+          <h2>Built on open-source VLMs and public benchmarks.</h2>
+          <p>
+            ECA builds on <a href="https://github.com/salesforce/LAVIS">LAVIS</a> and <a href="https://github.com/salesforce/LAVIS/tree/main/projects/blip2">BLIP-2</a>, with extensions to <a href="https://github.com/haotian-liu/LLaVA">LLaVA-v0</a> and <a href="https://github.com/OpenGVLab/InternVL">InternVL</a>. The ToS annotations are derived from <a href="https://cocodataset.org/">MSCOCO</a>, <a href="https://visualqa.org/">VQAv2</a>, <a href="https://textvqa.org/">TextCaps</a>, and <a href="https://textvqa.org/">TextVQA</a>. Images remain under the licenses and terms of their original datasets.
+          </p>
+        </div>
+      </section>
+
+      <section id="citation" class="section citation-section">
+        <div class="section-inner" data-reveal>
+          <p class="section-kicker">Citation</p>
+          <h2>Cite ECA</h2>
+          <pre><code>@inproceedings{kong2026eca,
+  title={ECA: Efficient Continual Alignment for Open-Ended Image-to-Text Generation},
+  author={Kong, Jiangtao and Zhao, Peijun and Chen, Chun-Fu and Do, Youngwook and Hu, Shaohan and Zhou, Tianyi and Shao, Huajie},
+  booktitle={International Conference on Machine Learning},
+  year={2026}
+}</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>© 2026 ECA Project. Built as a static project page for GitHub Pages.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
